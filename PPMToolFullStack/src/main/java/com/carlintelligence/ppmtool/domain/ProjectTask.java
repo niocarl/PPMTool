@@ -156,7 +156,7 @@ public class ProjectTask {
 
 	@Override
 	public String toString() {	
-		return "ProjectTask" +
+		return "ProjectTask{" +
 			   "id=" + id +
 			   ", projectSequence='" + projectSequence + '\'' +
 			   ", summary='" + summary + '\'' +
