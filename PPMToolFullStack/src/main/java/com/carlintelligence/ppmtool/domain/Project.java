@@ -50,6 +50,7 @@ public class Project {
 	private Date updated_At;
 	
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
+	@JsonIgnore
 	private Backlog backlog;
 	
 	public Project() {
