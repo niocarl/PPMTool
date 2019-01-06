@@ -1,13 +1,15 @@
 package com.carlintelligence.ppmtool.services;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.carlintelligence.ppmtool.domain.Backlog;
+import com.carlintelligence.ppmtool.domain.Project;
 import com.carlintelligence.ppmtool.domain.ProjectTask;
+import com.carlintelligence.ppmtool.exceptions.ProjectNotFoundException;
 import com.carlintelligence.ppmtool.repositories.BacklogRepository;
+import com.carlintelligence.ppmtool.repositories.ProjectRepository;
 import com.carlintelligence.ppmtool.repositories.ProjectTaskRepository;
 
 @Service
@@ -19,10 +21,17 @@ public class ProjectTaskService {
 	@Autowired
 	private ProjectTaskRepository projectTaskRepository;
 	
+	@Autowired
+	private ProjectRepository projectRepository;
+	
 	public ProjectTask addProjectTask(String projectIdentifier, ProjectTask projectTask) {
 		
 		//PT to be a specific project, project != null, BL exist
 		Backlog backlog = backlogRepository.findByProjectIdentifier(projectIdentifier);
+		
+		if (backlog == null) {
+			throw new ProjectNotFoundException("Project not found");
+		}
 		
 		//set the BL to PT
 		projectTask.setBacklog(backlog);
@@ -52,8 +61,15 @@ public class ProjectTaskService {
 		return projectTaskRepository.save(projectTask);
 	}
 
-	public Iterable<ProjectTask> findBacklogById(String backlog_id) {
-		return projectTaskRepository.findByProjectIdentifierOrderByPriority(backlog_id);
+	public Iterable<ProjectTask> findBacklogById(String id) {
+		
+		Project project = projectRepository.findByProjectIdentifier(id);
+		
+		if (project == null) {
+			throw new ProjectNotFoundException("Project with ID: '" + id +"' does not exist");
+		}
+		
+		return projectTaskRepository.findByProjectIdentifierOrderByPriority(id);
 	}
 
 }
